@@ -78,11 +78,23 @@ router.beforeEach((to, from, next) => {
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     next({ name: 'login', query: { redirect: to.fullPath } })
   } else if (to.meta.requiresGuest && authStore.isAuthenticated) {
-    next({ name: 'dashboard' })
+    // Redirect to appropriate dashboard based on role
+    if (authStore.user?.role === 'staff') {
+      next({ name: 'admin' })
+    } else {
+      next({ name: 'dashboard' })
+    }
   } else if (to.meta.requiresStaff && authStore.user?.role !== 'staff') {
     next({ name: 'dashboard' })
   } else if (to.meta.requiresReader && authStore.user?.role !== 'reader') {
-    next({ name: 'dashboard' })
+    if (authStore.user?.role === 'staff') {
+      next({ name: 'admin' })
+    } else {
+      next({ name: 'dashboard' })
+    }
+  } else if (to.path === '/dashboard' && authStore.user?.role === 'staff') {
+    // Redirect admin away from reader dashboard
+    next({ name: 'admin' })
   } else {
     next()
   }

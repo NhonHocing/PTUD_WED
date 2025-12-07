@@ -197,7 +197,7 @@ const fetchStats = async () => {
   try {
     // Fetch all data in parallel
     const [booksRes, requestsRes, allRequestsRes, slipsRes, allSlipsRes, readersRes] = await Promise.all([
-      api.get('/books?limit=1').catch(() => ({ data: { pagination: { total: 0 }, data: [] } })),
+      api.get('/books?limit=1000').catch(() => ({ data: { pagination: { total: 0 }, data: [] } })),
       api.get('/borrow-requests?status=pending').catch(() => ({ data: { data: [] } })),
       api.get('/borrow-requests').catch(() => ({ data: { data: [] } })),
       api.get('/borrow-slips?status=borrowed').catch(() => ({ data: { data: [] } })),
@@ -208,7 +208,7 @@ const fetchStats = async () => {
     allRequests.value = allRequestsRes.data.data || []
     allSlips.value = allSlipsRes.data.data || []
     
-    // Calculate available books
+    // Calculate available books - get all books to calculate total available
     const books = booksRes.data.data || []
     const availableBooks = books.reduce((sum, book) => sum + (book.availableCopies || 0), 0)
     

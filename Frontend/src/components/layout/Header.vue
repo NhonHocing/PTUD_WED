@@ -39,6 +39,14 @@
             </router-link>
             <router-link
               v-if="authStore.isStaff"
+              to="/admin/books"
+              class="px-4 py-2 text-gray-700 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-all duration-200 cursor-pointer font-medium"
+              active-class="text-primary-600 bg-primary-50"
+            >
+              Quản lý sách
+            </router-link>
+            <router-link
+              v-if="authStore.isStaff"
               to="/admin"
               class="px-4 py-2 text-gray-700 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-all duration-200 cursor-pointer font-medium"
               active-class="text-primary-600 bg-primary-50"
@@ -46,6 +54,7 @@
               Quản trị
             </router-link>
             <router-link
+              v-if="!authStore.isStaff"
               to="/dashboard"
               class="px-4 py-2 text-gray-700 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-all duration-200 cursor-pointer font-medium"
               active-class="text-primary-600 bg-primary-50"
@@ -134,6 +143,25 @@
                     </router-link>
                     
                     <router-link
+                      v-if="authStore.isStaff"
+                      to="/admin/books"
+                      class="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-600 transition-all duration-200 cursor-pointer font-medium group/item"
+                      @click="showMenu = false"
+                    >
+                      <BookOpenIcon class="w-5 h-5 text-gray-400 group-hover/item:text-primary-600 transition-colors" />
+                      <span>Quản lý sách</span>
+                    </router-link>
+                    <router-link
+                      v-if="authStore.isStaff"
+                      to="/admin"
+                      class="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-600 transition-all duration-200 cursor-pointer font-medium group/item"
+                      @click="showMenu = false"
+                    >
+                      <ChartBarIcon class="w-5 h-5 text-gray-400 group-hover/item:text-primary-600 transition-colors" />
+                      <span>Quản trị</span>
+                    </router-link>
+                    <router-link
+                      v-if="!authStore.isStaff"
                       to="/dashboard"
                       class="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-600 transition-all duration-200 cursor-pointer font-medium group/item"
                       @click="showMenu = false"
