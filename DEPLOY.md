@@ -96,10 +96,19 @@ Nếu bạn muốn tự động hóa, có thể sử dụng file `render.yaml` �
    - **Install Command**: `npm install`
 
 3. **Environment Variables:**
-   - **Key**: `VITE_API_URL`
-   - **Value**: `https://your-backend-name.onrender.com` (URL backend từ Render)
+   - Click vào "Environment Variables"
+   - Thêm biến mới:
+     - **Key**: `VITE_API_URL`
+     - **Value**: `https://your-backend-name.onrender.com` (URL backend từ Render)
+     - **Environment**: Chọn cả 3: Production, Preview, Development
+   - Click "Save"
 
 4. **Click "Deploy"**
+
+**⚠️ Lưu ý:** Nếu bạn đã deploy rồi và gặp lỗi về environment variable:
+- Vào Project Settings → Environment Variables
+- Thêm `VITE_API_URL` với giá trị là URL backend của bạn
+- Redeploy lại project
 
 ### 2.4. Deploy qua Vercel CLI (Tùy chọn)
 

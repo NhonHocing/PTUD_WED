@@ -547,10 +547,12 @@ const fetchBooks = async (page = 1) => {
     }
 
     const response = await api.get('/books', { params })
-    books.value = response.data.data
-    pagination.value = response.data.pagination
+    books.value = response.data?.data || []
+    pagination.value = response.data?.pagination || null
   } catch (error) {
     console.error('Error fetching books:', error)
+    books.value = []
+    pagination.value = null
     alert('Có lỗi xảy ra khi tải danh sách sách')
   } finally {
     loading.value = false

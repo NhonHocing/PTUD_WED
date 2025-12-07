@@ -91,9 +91,10 @@ const fetchRequests = async () => {
   loading.value = true
   try {
     const response = await api.get('/borrow-requests/my-requests')
-    requests.value = response.data.data
+    requests.value = response.data?.data || []
   } catch (error) {
     console.error('Error fetching requests:', error)
+    requests.value = []
   } finally {
     loading.value = false
   }

@@ -173,7 +173,11 @@ const minDate = computed(() => {
 const fetchBook = async () => {
   try {
     const response = await api.get(`/books/${route.params.id}`)
-    book.value = response.data.data
+    book.value = response.data?.data || null
+    if (!book.value) {
+      router.push('/books')
+      return
+    }
   } catch (error) {
     console.error('Error fetching book:', error)
     router.push('/books')

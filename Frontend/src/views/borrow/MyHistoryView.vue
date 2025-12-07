@@ -87,9 +87,10 @@ const fetchHistory = async () => {
   loading.value = true
   try {
     const response = await api.get('/borrow-slips/my-history')
-    history.value = response.data.data
+    history.value = response.data?.data || []
   } catch (error) {
     console.error('Error fetching history:', error)
+    history.value = []
   } finally {
     loading.value = false
   }

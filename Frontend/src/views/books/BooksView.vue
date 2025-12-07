@@ -156,10 +156,12 @@ const fetchBooks = async () => {
     if (statusFilter.value) params.status = statusFilter.value
 
     const response = await api.get('/books', { params })
-    books.value = response.data.data
-    pagination.value = response.data.pagination
+    books.value = response.data?.data || []
+    pagination.value = response.data?.pagination || null
   } catch (error) {
     console.error('Error fetching books:', error)
+    books.value = []
+    pagination.value = null
   } finally {
     loading.value = false
   }
@@ -168,9 +170,10 @@ const fetchBooks = async () => {
 const fetchCategories = async () => {
   try {
     const response = await api.get('/books/categories/list')
-    categories.value = response.data.data
+    categories.value = response.data?.data || []
   } catch (error) {
     console.error('Error fetching categories:', error)
+    categories.value = []
   }
 }
 

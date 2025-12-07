@@ -93,9 +93,9 @@
         <div v-if="loading" class="text-center py-16">
           <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-primary-200 border-t-primary-600"></div>
         </div>
-        <div v-else-if="books.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div v-else-if="books && Array.isArray(books) && books.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <div
-            v-for="book in books.slice(0, 4)"
+            v-for="book in (books || []).slice(0, 4)"
             :key="book._id"
             class="card-hover group"
             @click="$router.push(`/books/${book._id}`)"
@@ -169,9 +169,12 @@ const handleImageError = (event) => {
 onMounted(async () => {
   try {
     const response = await api.get('/books?limit=4&available=true')
-    books.value = response.data.data
+    // Đảm bảo books luôn là array
+    books.value = response.data?.data || response.data || []
   } catch (error) {
     console.error('Error fetching books:', error)
+    // Set về array rỗng nếu có lỗi
+    books.value = []
   } finally {
     loading.value = false
   }
