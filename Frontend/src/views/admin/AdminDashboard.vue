@@ -19,7 +19,7 @@
         <!-- Stats Cards -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <!-- Total Books -->
-          <div class="card hover:shadow-hover transition-all duration-300 group cursor-pointer">
+          <router-link to="/admin/books" class="card hover:shadow-hover transition-all duration-300 group cursor-pointer">
             <div class="flex items-center justify-between">
               <div class="flex-1">
                 <p class="text-sm text-gray-600 mb-1 font-medium">Tổng sách</p>
@@ -30,7 +30,7 @@
                 <BookOpenIcon class="w-8 h-8 text-primary-600" />
               </div>
             </div>
-          </div>
+          </router-link>
 
           <!-- Pending Requests -->
           <div class="card hover:shadow-hover transition-all duration-300 group cursor-pointer border-2 border-yellow-200">
@@ -108,6 +108,25 @@
                   <p class="text-sm text-purple-700 mb-1 font-medium">Yêu cầu đã duyệt</p>
                   <p class="text-2xl font-bold text-purple-900">{{ stats.approvedRequests || 0 }}</p>
                 </div>
+              </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="card">
+              <div class="flex items-center gap-3 mb-6">
+                <div class="w-10 h-10 bg-primary-100 rounded-xl flex items-center justify-center">
+                  <BoltIcon class="w-6 h-6 text-primary-600" />
+                </div>
+                <h2 class="text-xl font-bold text-gray-900">Thao tác nhanh</h2>
+              </div>
+              <div class="space-y-2">
+                <router-link
+                  to="/admin/books"
+                  class="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-primary-50 to-primary-100 rounded-lg hover:from-primary-100 hover:to-primary-200 transition-all duration-200 cursor-pointer font-medium group"
+                >
+                  <BookOpenIcon class="w-5 h-5 text-primary-600 group-hover:scale-110 transition-transform" />
+                  <span class="text-sm text-gray-900">Quản lý sách</span>
+                </router-link>
               </div>
             </div>
 

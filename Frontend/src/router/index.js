@@ -59,6 +59,12 @@ const routes = [
     component: () => import('@/views/admin/AdminDashboard.vue'),
     meta: { requiresAuth: true, requiresStaff: true },
   },
+  {
+    path: '/admin/books',
+    name: 'admin-books',
+    component: () => import('@/views/admin/AdminBooksView.vue'),
+    meta: { requiresAuth: true, requiresStaff: true },
+  },
 ]
 
 const router = createRouter({
