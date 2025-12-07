@@ -21,7 +21,7 @@
      JWT_SECRET=your-secret-key-min-32-chars
      JWT_EXPIRE=30d
      ```
-   - Lưu URL backend: `https://xxx.onrender.com`
+   - Lưu URL backend: `https://ptud-wed.onrender.com` ✅
 
 ## Frontend (Vercel) - 3 phút
 
@@ -34,13 +34,14 @@
    - **Output Directory**: `dist`
    - **Environment Variable:**
      - Key: `VITE_API_URL`
-     - Value: `https://xxx.onrender.com` (URL backend từ Render)
+     - Value: `https://ptud-wed.onrender.com` ⬅️ **URL backend của bạn**
 
 2. **Done!** 🎉
 
 ## ⚠️ Lưu ý
 
 - Backend có thể mất 1-2 phút để start lần đầu (free tier)
-- Nếu lỗi CORS, thêm vào Render env: `CORS_ORIGIN=https://your-frontend.vercel.app`
-- Test API: `https://xxx.onrender.com/health`
+- Nếu lỗi CORS, thêm vào Render env: `CORS_ORIGIN=https://ptud-wed-ebc7.vercel.app`
+- Test API: `https://ptud-wed.onrender.com/health`
+- **QUAN TRỌNG**: Sau khi set `VITE_API_URL` trong Vercel, phải **Redeploy** để có hiệu lực!
 

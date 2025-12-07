@@ -42,11 +42,17 @@
 3. **Thiết lập Environment Variables:**
    ```
    NODE_ENV=production
-   PORT=3001
+   # PORT không cần set - Render tự động cấp qua biến môi trường PORT
    MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/library_management?retryWrites=true&w=majority
    JWT_SECRET=your-super-secret-jwt-key-min-32-characters-long
    JWT_EXPIRE=30d
+   CORS_ORIGIN=https://your-frontend.vercel.app
    ```
+   
+   **Lưu ý về PORT:**
+   - Render tự động set biến môi trường `PORT`
+   - Code đã đọc đúng: `process.env.PORT || 3001`
+   - Không cần set PORT thủ công trong Render
 
 4. **Plan**: Chọn Free plan
 

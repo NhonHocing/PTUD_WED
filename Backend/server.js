@@ -17,10 +17,29 @@ const app = express();
 // Middleware
 // CORS configuration
 const corsOptions = {
-  origin: process.env.CORS_ORIGIN || '*', // In production, set specific frontend URL
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps, Postman, Swagger UI, or curl)
+    if (!origin) return callback(null, true);
+    
+    const allowedOrigins = process.env.CORS_ORIGIN 
+      ? process.env.CORS_ORIGIN.split(',').map(o => o.trim())
+      : ['*'];
+    
+    // Allow all origins in development or if CORS_ORIGIN is '*'
+    if (allowedOrigins.includes('*') || process.env.NODE_ENV !== 'production') {
+      return callback(null, true);
+    }
+    
+    // Check if origin is allowed
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
 };
 
 app.use(cors(corsOptions));
@@ -28,10 +47,56 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Swagger Documentation
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
-  customCss: '.swagger-ui .topbar { display: none }',
-  customSiteTitle: 'Library Management API Documentation',
-}));
+// Function to get current server URL from request
+const getCurrentServerUrl = (req) => {
+  // If API_URL is set, use it
+  if (process.env.API_URL) {
+    return process.env.API_URL;
+  }
+  
+  // In production, use the Render domain
+  if (process.env.NODE_ENV === 'production') {
+    return 'https://ptud-wed.onrender.com';
+  }
+  
+  // In development, construct from request
+  const protocol = req.protocol;
+  const host = req.get('host');
+  return `${protocol}://${host}`;
+};
+
+// Custom Swagger setup to use current server URL
+app.use('/api-docs', swaggerUi.serve);
+app.use('/api-docs', (req, res, next) => {
+  const currentUrl = getCurrentServerUrl(req);
+  
+  // Update swagger spec with current server URL
+  const swaggerSpecWithUrl = {
+    ...swaggerSpec,
+    servers: [
+      {
+        url: currentUrl,
+        description: process.env.NODE_ENV === 'production' ? 'Production server' : 'Development server',
+      },
+      // Add alternative servers
+      ...(process.env.NODE_ENV === 'production' 
+        ? []
+        : [
+            {
+              url: 'https://ptud-wed.onrender.com',
+              description: 'Production server (Render)',
+            },
+          ]),
+    ],
+  };
+  
+  const swaggerUiHandler = swaggerUi.setup(swaggerSpecWithUrl, {
+    customCss: '.swagger-ui .topbar { display: none }',
+    customSiteTitle: 'Library Management API Documentation',
+  });
+  
+  swaggerUiHandler(req, res, next);
+});
 
 // Routes
 app.use('/api', require('./routes'));

@@ -1,5 +1,20 @@
 const swaggerJsdoc = require('swagger-jsdoc');
 
+// Determine server URL based on environment
+const getServerUrl = () => {
+  if (process.env.API_URL) {
+    return process.env.API_URL;
+  }
+  
+  if (process.env.NODE_ENV === 'production') {
+    return 'https://ptud-wed.onrender.com';
+  }
+  
+  // Development: use localhost with correct port
+  const port = process.env.PORT || 3001;
+  return `http://localhost:${port}`;
+};
+
 const options = {
   definition: {
     openapi: '3.0.0',
@@ -14,13 +29,18 @@ const options = {
     },
     servers: [
       {
-        url: `http://localhost:${process.env.PORT || 3001}`,
-        description: 'Development server',
+        url: getServerUrl(),
+        description: process.env.NODE_ENV === 'production' ? 'Production server' : 'Development server',
       },
-      {
-        url: 'https://api.library.com',
-        description: 'Production server',
-      },
+      // Add alternative server for production
+      ...(process.env.NODE_ENV === 'production' 
+        ? []
+        : [
+            {
+              url: 'https://ptud-wed.onrender.com',
+              description: 'Production server (Render)',
+            },
+          ]),
     ],
     components: {
       securitySchemes: {
