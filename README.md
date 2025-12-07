@@ -120,6 +120,17 @@ Sau khi chạy seed data, bạn có thể sử dụng:
 
 Truy cập Swagger UI tại: `http://localhost:3001/api-docs`
 
+## Deploy
+
+Xem hướng dẫn chi tiết deploy lên Vercel (Frontend) và Render (Backend) tại:
+- **[DEPLOY.md](./DEPLOY.md)** - Hướng dẫn chi tiết
+- **[QUICK_DEPLOY.md](./QUICK_DEPLOY.md)** - Hướng dẫn nhanh
+
+### Tóm tắt:
+- **Frontend**: Deploy lên Vercel
+- **Backend**: Deploy lên Render
+- **Database**: MongoDB Atlas (free tier)
+
 ## License
 
 ISC

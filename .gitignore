@@ -11,6 +11,11 @@ pnpm-lock.yaml
 .env
 .env.local
 .env.*.local
+.env.production
+Backend/.env
+Backend/.env.*
+Frontend/.env
+Frontend/.env.*
 
 # Build outputs
 dist/
