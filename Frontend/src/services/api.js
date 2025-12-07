@@ -8,8 +8,10 @@ const getApiUrl = () => {
   
   // If VITE_API_URL is set, use it (production)
   if (envUrl) {
-    // Remove trailing slash if exists
-    return envUrl.replace(/\/$/, '')
+    // Remove trailing slash if exists, then add /api
+    const baseUrl = envUrl.replace(/\/$/, '')
+    // Backend routes are mounted at /api, so we need to include it
+    return `${baseUrl}/api`
   }
   
   // Development: use relative path (will be proxied by Vite)
