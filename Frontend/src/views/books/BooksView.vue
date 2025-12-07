@@ -158,8 +158,20 @@ const fetchBooks = async () => {
     const response = await api.get('/books', { params })
     books.value = response.data?.data || []
     pagination.value = response.data?.pagination || null
+    
+    // Log success for debugging
+    if (books.value.length === 0 && !searchQuery.value && !selectedCategory.value) {
+      console.warn('⚠️ No books found. Check if database has data or API is working correctly.')
+    }
   } catch (error) {
-    console.error('Error fetching books:', error)
+    console.error('❌ Error fetching books:', error)
+    console.error('Error details:', {
+      message: error.message,
+      response: error.response?.data,
+      status: error.response?.status,
+      url: error.config?.url,
+      baseURL: error.config?.baseURL,
+    })
     books.value = []
     pagination.value = null
   } finally {

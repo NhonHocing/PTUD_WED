@@ -18,10 +18,9 @@ const getApiUrl = () => {
 
 const API_URL = getApiUrl()
 
-// Log API URL in development to help debug
-if (import.meta.env.DEV) {
-  console.log('🔗 API URL:', API_URL)
-}
+// Log API URL to help debug (both dev and production)
+console.log('🔗 API Base URL:', API_URL)
+console.log('🔗 VITE_API_URL env:', import.meta.env.VITE_API_URL || 'Not set')
 
 const api = axios.create({
   baseURL: API_URL,
@@ -48,6 +47,28 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    // Log error details for debugging
+    if (error.response) {
+      // Server responded with error
+      console.error('❌ API Error:', {
+        status: error.response.status,
+        statusText: error.response.statusText,
+        url: error.config?.url,
+        baseURL: error.config?.baseURL,
+        message: error.response.data?.message || error.message,
+      })
+    } else if (error.request) {
+      // Request was made but no response received
+      console.error('❌ Network Error:', {
+        url: error.config?.url,
+        baseURL: error.config?.baseURL,
+        message: 'No response from server. Check if backend is running and CORS is configured.',
+      })
+    } else {
+      // Something else happened
+      console.error('❌ Request Error:', error.message)
+    }
+    
     if (error.response?.status === 401) {
       localStorage.removeItem('token')
       window.location.href = '/login'
