@@ -1,7 +1,27 @@
 import axios from 'axios'
 
-// Use environment variable for API URL, fallback to relative path for development
-const API_URL = import.meta.env.VITE_API_URL || '/api'
+// Use environment variable for API URL
+// In production (Vercel), this should be set to your Render backend URL
+// In development, fallback to relative path which will use Vite proxy
+const getApiUrl = () => {
+  const envUrl = import.meta.env.VITE_API_URL
+  
+  // If VITE_API_URL is set, use it (production)
+  if (envUrl) {
+    // Remove trailing slash if exists
+    return envUrl.replace(/\/$/, '')
+  }
+  
+  // Development: use relative path (will be proxied by Vite)
+  return '/api'
+}
+
+const API_URL = getApiUrl()
+
+// Log API URL in development to help debug
+if (import.meta.env.DEV) {
+  console.log('🔗 API URL:', API_URL)
+}
 
 const api = axios.create({
   baseURL: API_URL,
