@@ -3,7 +3,12 @@ const swaggerJsdoc = require('swagger-jsdoc');
 // Determine server URL based on environment
 const getServerUrl = () => {
   if (process.env.API_URL) {
-    return process.env.API_URL;
+    // Ensure HTTPS for production URLs
+    const url = process.env.API_URL;
+    if (url.includes('onrender.com') || url.includes('vercel.app') || process.env.NODE_ENV === 'production') {
+      return url.replace(/^http:/, 'https:');
+    }
+    return url;
   }
   
   if (process.env.NODE_ENV === 'production') {
@@ -36,10 +41,10 @@ const options = {
       ...(process.env.NODE_ENV === 'production' 
         ? []
         : [
-            {
+      {
               url: 'https://ptud-wed.onrender.com',
               description: 'Production server (Render)',
-            },
+      },
           ]),
     ],
     components: {

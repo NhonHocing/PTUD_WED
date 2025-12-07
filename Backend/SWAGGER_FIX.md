@@ -2,27 +2,32 @@
 
 ## Vấn đề
 
-Khi test API trong Swagger UI, gặp lỗi:
+Khi test API trong Swagger UI trên Render, gặp lỗi:
 - "Failed to fetch"
 - "CORS error"
+- Swagger UI đang hardcode `localhost:3000` thay vì dùng `https://ptud-wed.onrender.com`
 - "URL scheme must be "http" or "https" for CORS request"
 
 ## Nguyên nhân
 
-1. Swagger UI đang cố gọi `localhost:3000` nhưng server chạy trên port `3001`
-2. CORS chưa được cấu hình đúng để cho phép Swagger UI
-3. Swagger servers config chưa đúng với môi trường hiện tại
+1. **Swagger UI đang hardcode `localhost:3000`** trong curl command và request URL
+2. Khi deploy lên Render, Swagger vẫn cố gọi `localhost:3000` thay vì `https://ptud-wed.onrender.com`
+3. CORS chưa được cấu hình đúng để cho phép Swagger UI
+4. Swagger servers config chưa tự động detect URL hiện tại
 
 ## Cách sửa
 
-### 1. Kiểm tra server đang chạy
+### 1. Set Environment Variable trên Render
 
-```bash
-cd Backend
-npm run dev
-```
+**QUAN TRỌNG**: Thêm biến `API_URL` trên Render:
 
-Đảm bảo server chạy trên port đúng (mặc định là 3001).
+1. Vào Render Dashboard: https://dashboard.render.com
+2. Chọn service `ptud-wed` (hoặc tên service backend của bạn)
+3. Vào **Environment**
+4. Thêm biến mới:
+   - **Key**: `API_URL`
+   - **Value**: `https://ptud-wed.onrender.com`
+5. **Save Changes** và **Manual Deploy** (hoặc đợi auto deploy)
 
 ### 2. Truy cập Swagger UI
 
@@ -35,7 +40,11 @@ npm run dev
 2. Ở góc trên bên phải, có dropdown "Servers"
 3. Chọn server đúng:
    - **Development**: `http://localhost:3001`
-   - **Production**: `https://ptud-wed.onrender.com`
+   - **Production**: `https://ptud-wed.onrender.com` ⬅️ **Chọn cái này khi test trên Render**
+
+### 4. Kiểm tra CORS
+
+Đảm bảo `CORS_ORIGIN` trên Render đã được set (hoặc để `*` để cho phép tất cả trong development)
 
 ### 4. Nếu vẫn lỗi CORS
 

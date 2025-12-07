@@ -14,6 +14,9 @@ connectDB();
 
 const app = express();
 
+// Trust proxy (important for Render to get correct protocol from x-forwarded-proto header)
+app.set('trust proxy', true);
+
 // Middleware
 // CORS configuration
 const corsOptions = {
@@ -49,19 +52,31 @@ app.use(express.urlencoded({ extended: true }));
 // Swagger Documentation
 // Function to get current server URL from request
 const getCurrentServerUrl = (req) => {
-  // If API_URL is set, use it
+  // If API_URL is set, use it (ensure HTTPS)
   if (process.env.API_URL) {
-    return process.env.API_URL;
+    return process.env.API_URL.replace(/^http:/, 'https:');
   }
   
-  // In production, use the Render domain
+  // In production, always use HTTPS
   if (process.env.NODE_ENV === 'production') {
     return 'https://ptud-wed.onrender.com';
   }
   
   // In development, construct from request
-  const protocol = req.protocol;
+  // Check if request came over HTTPS (e.g., through proxy)
+  const forwardedProto = req.get('x-forwarded-proto');
+  const protocol = forwardedProto || req.protocol;
   const host = req.get('host');
+  
+  // Force HTTPS if:
+  // 1. On Render domain (onrender.com)
+  // 2. x-forwarded-proto is https
+  // 3. Original request was HTTPS
+  if (host && (host.includes('onrender.com') || forwardedProto === 'https' || req.secure)) {
+    return `https://${host}`;
+  }
+  
+  // For localhost, use the protocol from request
   return `${protocol}://${host}`;
 };
 
@@ -70,29 +85,33 @@ app.use('/api-docs', swaggerUi.serve);
 app.use('/api-docs', (req, res, next) => {
   const currentUrl = getCurrentServerUrl(req);
   
-  // Update swagger spec with current server URL
-  const swaggerSpecWithUrl = {
-    ...swaggerSpec,
-    servers: [
-      {
-        url: currentUrl,
-        description: process.env.NODE_ENV === 'production' ? 'Production server' : 'Development server',
-      },
-      // Add alternative servers
-      ...(process.env.NODE_ENV === 'production' 
-        ? []
-        : [
-            {
-              url: 'https://ptud-wed.onrender.com',
-              description: 'Production server (Render)',
-            },
-          ]),
-    ],
-  };
+  // Clone swagger spec and update servers
+  const swaggerSpecWithUrl = JSON.parse(JSON.stringify(swaggerSpec));
+  
+  // Ensure URL uses HTTPS for production domains
+  let serverUrl = currentUrl;
+  if (serverUrl.includes('onrender.com') || serverUrl.includes('vercel.app') || process.env.NODE_ENV === 'production') {
+    serverUrl = serverUrl.replace(/^http:/, 'https:');
+  }
+  
+  swaggerSpecWithUrl.servers = [
+    {
+      url: serverUrl,
+      description: process.env.NODE_ENV === 'production' ? 'Production server' : 'Development server',
+    },
+  ];
+  
+  // Add alternative server for development
+  if (process.env.NODE_ENV !== 'production') {
+    swaggerSpecWithUrl.servers.push({
+      url: 'https://ptud-wed.onrender.com',
+      description: 'Production server (Render)',
+    });
+  }
   
   const swaggerUiHandler = swaggerUi.setup(swaggerSpecWithUrl, {
-    customCss: '.swagger-ui .topbar { display: none }',
-    customSiteTitle: 'Library Management API Documentation',
+  customCss: '.swagger-ui .topbar { display: none }',
+  customSiteTitle: 'Library Management API Documentation',
   });
   
   swaggerUiHandler(req, res, next);

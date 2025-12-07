@@ -6,12 +6,17 @@
 
 ```
 NODE_ENV=production
-PORT=3001
+# PORT không cần set - Render tự động cấp
 MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/library_management
 JWT_SECRET=your-super-secret-jwt-key-min-32-characters-long
 JWT_EXPIRE=30d
 CORS_ORIGIN=https://ptud-wed-ebc7.vercel.app
+API_URL=https://ptud-wed.onrender.com
 ```
+
+**Lưu ý:**
+- `API_URL`: Set để Swagger UI biết URL đúng khi test API
+- `CORS_ORIGIN`: URL frontend Vercel của bạn
 
 **Lưu ý:**
 - Thay `username:password` và `cluster.mongodb.net` bằng thông tin MongoDB Atlas thực tế của bạn
